@@ -2,7 +2,7 @@ from typing import Optional
 
 from fastapi import FastAPI
 
-from analyzer.tool import load_json, chat_info, get_oldest_message, get_latest_message
+from analyzer.tool import load_json, chat_info, get_oldest_message, get_latest_message, get_senders
 
 app = FastAPI()
 
@@ -43,3 +43,14 @@ async def get_latest_message_endpoint(file_path: Optional[str] = 'result.json'):
     latest_message = get_latest_message(data)
 
     return latest_message
+
+
+@app.get("/senders")
+async def get_senders_endpoint(file_path: Optional[str] = 'result.json'):
+    data = load_json(file_path)
+    if data is None:
+        return {"message": "Failed to load JSON data"}
+
+    senders_ranked = get_senders(data)
+
+    return senders_ranked
