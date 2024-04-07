@@ -2,7 +2,7 @@ from typing import Optional
 
 from fastapi import FastAPI
 
-from analyzer.tool import load_json, chat_info, get_oldest_message
+from analyzer.tool import load_json, chat_info, get_oldest_message, get_latest_message
 
 app = FastAPI()
 
@@ -14,7 +14,6 @@ async def root():
 
 @app.get("/chat/info")
 async def get_chat_info(file_path: Optional[str] = 'result.json'):
-
     data = load_json(file_path)
     if data is None:
         return {"message": "Failed to load JSON data"}
@@ -26,12 +25,21 @@ async def get_chat_info(file_path: Optional[str] = 'result.json'):
 
 @app.get("/message/oldest")
 async def get_oldest_message_endpoint(file_path: Optional[str] = 'result.json'):
-    # Load JSON data
     data = load_json(file_path)
     if data is None:
         return {"message": "Failed to load JSON data"}
 
-    # Get the oldest message
     oldest_message = get_oldest_message(data)
 
     return oldest_message
+
+
+@app.get("/message/latest")
+async def get_latest_message_endpoint(file_path: Optional[str] = 'result.json'):
+    data = load_json(file_path)
+    if data is None:
+        return {"message": "Failed to load JSON data"}
+
+    latest_message = get_latest_message(data)
+
+    return latest_message
