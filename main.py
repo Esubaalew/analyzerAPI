@@ -1,13 +1,22 @@
 from typing import Optional
-
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 
 from analyzer.tool import load_json, chat_info, get_oldest_message, get_latest_message, get_senders, \
-    get_forwarded_messages, get_forwarders, get_forward_sources, get_repliers, get_editors, get_most_common_words, \
+    get_forwarders, get_forward_sources, get_repliers, get_editors, get_most_common_words, \
     each_average_message_length, get_most_active_hours, get_most_active_weekdays, get_most_active_months, \
     get_user_activity, get_most_active_months_all_time, get_most_active_months_by_year
 
 app = FastAPI()
+
+# Allow requests from all origins
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
