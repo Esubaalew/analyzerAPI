@@ -4,7 +4,7 @@ from fastapi import FastAPI
 
 from analyzer.tool import load_json, chat_info, get_oldest_message, get_latest_message, get_senders, \
     get_forwarded_messages, get_forwarders, get_forward_sources, get_repliers, get_editors, get_most_common_words, \
-    each_average_message_length
+    each_average_message_length, get_most_active_hours
 
 app = FastAPI()
 
@@ -122,3 +122,15 @@ async def calculate_average_message_length(file_path: Optional[str] = 'result.js
     average_lengths = each_average_message_length(data)
 
     return average_lengths
+
+
+@app.get("/most-active-hours")
+async def calculate_most_active_hours(file_path: str = 'result.json'):
+    data = load_json(file_path)
+    if data is None:
+        return {"message": "Failed to load JSON data"}
+
+    active_hours = get_most_active_hours(data)
+    active_hours = [{'hour': hour, 'messages': count} for hour, count in active_hours]
+
+    return active_hours
