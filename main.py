@@ -4,7 +4,8 @@ from fastapi import FastAPI
 
 from analyzer.tool import load_json, chat_info, get_oldest_message, get_latest_message, get_senders, \
     get_forwarded_messages, get_forwarders, get_forward_sources, get_repliers, get_editors, get_most_common_words, \
-    each_average_message_length, get_most_active_hours, get_most_active_weekdays, get_most_active_months
+    each_average_message_length, get_most_active_hours, get_most_active_weekdays, get_most_active_months, \
+    get_user_activity
 
 app = FastAPI()
 
@@ -160,3 +161,17 @@ async def calculate_most_active_months(file_path: str = 'result.json'):
     active_months_dict = {month: count for month, count in active_months_counter}
 
     return active_months_dict
+
+
+@app.get("/user-activity")
+async def analyze_user_activity(file_path: str = 'result.json'):
+    data = load_json(file_path)
+    if data is None:
+        return {"message": "Failed to load JSON data"}
+
+    user_activity = get_user_activity(data)
+
+    for user, activity_info in user_activity.items():
+        activity_info.pop('Overall', None)
+
+    return user_activity
