@@ -3,7 +3,7 @@ from typing import Optional
 from fastapi import FastAPI
 
 from analyzer.tool import load_json, chat_info, get_oldest_message, get_latest_message, get_senders, \
-    get_forwarded_messages, get_forwarders
+    get_forwarded_messages, get_forwarders, get_forward_sources
 
 app = FastAPI()
 
@@ -66,3 +66,14 @@ async def get_forwarder_ranking(file_path: Optional[str] = 'result.json'):
     forwarder_ranking = get_forwarders(data)
 
     return forwarder_ranking
+
+
+@app.get("/forward-sources")
+async def get_forward_sources_count(file_path: Optional[str] = 'result.json'):
+    data = load_json(file_path)
+    if data is None:
+        return {"message": "Failed to load JSON data"}
+
+    forward_sources_count = get_forward_sources(data)
+
+    return forward_sources_count
