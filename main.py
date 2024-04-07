@@ -2,7 +2,8 @@ from typing import Optional
 
 from fastapi import FastAPI
 
-from analyzer.tool import load_json, chat_info, get_oldest_message, get_latest_message, get_senders
+from analyzer.tool import load_json, chat_info, get_oldest_message, get_latest_message, get_senders, \
+    get_forwarded_messages, get_forwarders
 
 app = FastAPI()
 
@@ -54,3 +55,14 @@ async def get_senders_endpoint(file_path: Optional[str] = 'result.json'):
     senders_ranked = get_senders(data)
 
     return senders_ranked
+
+
+@app.get("/forwarders")
+async def get_forwarder_ranking(file_path: Optional[str] = 'result.json'):
+    data = load_json(file_path)
+    if data is None:
+        return {"message": "Failed to load JSON data"}
+
+    forwarder_ranking = get_forwarders(data)
+
+    return forwarder_ranking
